@@ -12,7 +12,7 @@ router.post('/uploadAvatar', checkLogin, (req, res, next) => {
     const username = req.body.username
     // 过滤data:URL
     const base64Data = imgData.replace(/^data:image\/\w+;base64,/, "")
-    const dataBuffer = new Buffer(base64Data, 'base64')
+    const dataBuffer = Buffer.from(base64Data, 'base64')
     const filename = `${new Date().getTime()}.png`
     fs.writeFile(path.join(__dirname, `../uploads/${filename}`), dataBuffer, async (err) => {
         if (err) {

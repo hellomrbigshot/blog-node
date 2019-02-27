@@ -7,8 +7,8 @@ const checkLogin = require('../middlewares/check').checkLogin
 
 router.post('/new', checkLogin, async (req, res, next) => { // 新建文章
     try {
-        const create_date = new Date().toLocaleString()
-        const update_date = new Date().toLocaleString()
+        const create_time = new Date().toLocaleString()
+        const update_time = new Date().toLocaleString()
         const title = req.body.title
         const content = req.body.content
         const create_user = req.session.user.username
@@ -20,13 +20,13 @@ router.post('/new', checkLogin, async (req, res, next) => { // 新建文章
             tags,
             content,
             create_user,
-            create_date,
-            update_date,
+            create_time,
+            update_time,
             status,
             secret
         }
         const result = await PageModel.create(page)
-        await ActivityModel.create({ type: 'page', id: result._id, create_time: result.create_date, update_date: result.update_date, create_user: result.create_user })
+        await ActivityModel.create({ type: 'page', id: result._id, create_time: result.create_time, update_time: result.update_time, create_user: result.create_user })
 
         const [page_num, draft_num] = await Promise.all([
             PageModel.getPageNum({ type: 'create_user', content: create_user, status: 'normal' }),
@@ -41,7 +41,7 @@ router.post('/new', checkLogin, async (req, res, next) => { // 新建文章
 router.post('/edit', checkLogin, async (req, res, next) => { // 编辑文章
     try {
         const id = req.body.id
-        const update_date = new Date()
+        const update_time = new Date()
         const title = req.body.title
         const content = req.body.content
         const create_user = req.session.user.username
@@ -51,13 +51,13 @@ router.post('/edit', checkLogin, async (req, res, next) => { // 编辑文章
         let page = {
             title,
             content,
-            update_date,
+            update_time,
             status,
             secret,
             tags
         }
         const result = await PageModel.update(id, page)
-        await ActivityModel.create({ type: 'page', id: result._id, create_time: result.create_date, update_time: result.update_date, create_user: result.create_user })
+        await ActivityModel.create({ type: 'page', id: result._id, create_time: result.create_time, update_time: result.update_time, create_user: result.create_user })
         const [page_num, draft_num] = await Promise.all([
             PageModel.getPageNum({ type: 'create_user', content: create_user, status: 'normal' }),
 			PageModel.getPageNum({ type: 'create_user', content: create_user, status: 'draft' }),
@@ -92,7 +92,7 @@ router.post('/pagelist', async (req, res, next) => { // 获取文章列表
     const content = req.body.content
     const status = req.body.status
     const secret = req.body.secret
-    const sort = req.body.sort || 'create_date'
+    const sort = req.body.sort || 'create_time'
     pageSize = typeof (pageSize) === 'number' ? pageSize : parseInt(pageSize)
     page = typeof (page) === 'number' ? page : parseInt(page)
     const Count =  pageSize * (page - 1)
@@ -130,7 +130,7 @@ router.post('/limitpagelist', checkLogin, async (req, res, next) => { // 根据�
     const content = req.body.content
     const status = req.body.status
     const secret = req.body.secret
-    const sort = req.body.sort || 'create_date'
+    const sort = req.body.sort || 'create_time'
     pageSize = typeof (pageSize) === 'number' ? pageSize : parseInt(pageSize)
     page = typeof (page) === 'number' ? page : parseInt(page)
     const Count =  pageSize * (page - 1)

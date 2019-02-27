@@ -51,14 +51,14 @@ router.post('/create', checkLogin, async (req, res, next) => {
     const name = req.body.name
     const description = req.body.description
     const create_user = req.session.user.username
-    const create_date = new Date()
-    const update_date = new Date()
+    const create_time = new Date()
+    const update_time = new Date()
     try {
         let exist = await TagModel.findTagByName(name)
         if (exist) {
             throw new Error('已存在该标签')
         }
-        let result = await TagModel.create({ name, description, create_user, create_date, update_date })
+        let result = await TagModel.create({ name, description, create_user, create_time, update_time })
         res.status(200).json({ code: 'OK', data: result })
     } catch (e) {
         res.status(200).json({ code: 'ERROR', data: e.message })
