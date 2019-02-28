@@ -30,7 +30,7 @@ router.post('/', checkNotLogin, async (req, res, next) => {
 		res.status(200).json({code: 'OK', data: '登录成功'})
 	} catch (e) {
 		res.status(200).json({ code: 'ERROR', data: e.message })
-        return false
+    return false
 	}
 	
 })
@@ -43,7 +43,7 @@ router.post('/getUserInfo', checkLogin, async (req, res, next) => {
 		const [page_num, draft_num, comment_num] = await Promise.all([
 			PageModel.getPageNum({ type: 'create_user', content: username, status: 'normal' }),
 			PageModel.getPageNum({ type: 'create_user', content: username, status: 'draft' }),
-			CommentModel.getCommentNum('create_user', username)
+			CommentModel.getCommentNum('to_user', username, req.session.user.username)
 		])
 		user.page_num = page_num
 		user.draft_num = draft_num

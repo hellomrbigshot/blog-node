@@ -12,9 +12,10 @@ router.post('/create', checkLogin, async (req, res, next) => {
     const page_id = req.body.page_id
     const page_title = req.body.page_title
     const to_user = req.body.to_user
+    const reply_user = req.body.reply_user
     const create_time = new Date().toLocaleString()
     try {
-        const result = await CommentModel.create({ content, create_user, page_id, page_title, to_user, create_time })
+        const result = await CommentModel.create({ content, create_user, page_id, page_title, to_user, create_time, reply_user })
         // 添加一条动态
         await ActivityModel.create({ type: 'comment', id: result._id, create_time: result.create_time, create_user: result.create_user, update_time: result.create_time })
         res.status(200).json({ code: 'OK', data: result })
@@ -39,6 +40,7 @@ router.post('/getusercommentlist', checkLogin, async (req, res, next) => {
     const type = req.body.type
     const create_user = req.body.create_user
     const to_user = req.body.to_user
+    const username = req.session.user.username
     let pageSize = req.body.pageSize || 10
     let page = req.body.page || 1
     pageSize = typeof pageSize === 'number' ? pageSize : parseInt(pageSize)
@@ -47,8 +49,8 @@ router.post('/getusercommentlist', checkLogin, async (req, res, next) => {
     const content = type === 'create_user' ? create_user : to_user
     try {
         let [result, total] = await Promise.all([
-            CommentModel.getCommentList({ type, content, pageSize, Count }), 
-            CommentModel.getCommentNum(type, type === 'create_user' ? create_user : to_user)
+            CommentModel.getCommentList({ type, content, pageSize, Count, username }), 
+            CommentModel.getCommentNum(type, type === 'create_user' ? create_user : to_user, username)
         ]) 
         res.status(200).json({ code: 'OK', data: { result, total } })
     } catch (e) {

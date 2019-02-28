@@ -17,13 +17,20 @@ module.exports = {
         const content = query.content
         const pageSize = query.pageSize
         const Count = query.Count
+        const username = query.username
         let query_obj = {}
         if (type === 'page') {
             query_obj.page_id = content
         } else if (type === 'create_user') {
             query_obj.create_user = content
-        } else if (type === 'to_user') {
-            query_obj.to_user = content
+        } else if (type === 'to_user') { 
+            // 我文章回复 + 我评论的回复
+            // 剔除我对自己评论的回复
+            query_obj.$or = [
+                { to_user: content },
+                { reply_user: content }
+            ]
+            query_obj.create_user = { $ne: username }
         }
         if (pageSize && Count) {
             return Comment
@@ -40,14 +47,18 @@ module.exports = {
         
     },
     // 查询评论数量
-    getCommentNum (type, content) {
+    getCommentNum (type, content, username) {
         let query_obj = {}
         if (type === 'page') {
             query_obj.page_id = content
         } else if (type === 'create_user') {
             query_obj.create_user = content
         } else if (type === 'to_user') {
-            query_obj.to_user = content
+            query_obj.$or = [
+                { to_user: content },
+                { reply_user: content }
+            ]
+            query_obj.create_user = { $ne: username }
         }
         return Comment
             .find(query_obj)
