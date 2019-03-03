@@ -16,5 +16,7 @@ script:
 after_success:
 - chmod 600 ~/.ssh/id_rsa
 before_install:
+- openssl aes-256-cbc -K $encrypted_a46a360c8512_key -iv $encrypted_a46a360c8512_iv
+  -in id_rsa.enc -out ~\/.ssh/id_rsa -d
 - openssl aes-256-cbc -K $encrypted_9c9e33ab7bb2_key -iv $encrypted_9c9e33ab7bb2_iv
   -in id_rsa.enc -out ~/.ssh/id_rsa -d
