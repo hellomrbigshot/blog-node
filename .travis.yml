@@ -12,7 +12,7 @@ install:
 - git pull
 - rm -f package-lock.json && npm install
 script:
-- pm2 restart index.js
+- pm restart index.js
 after_success:
 - chmod 600 ~/.ssh/id_rsa
 before_install:
