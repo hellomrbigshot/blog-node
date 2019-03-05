@@ -1,0 +1,21 @@
+language: node_js
+node_js:
+- 8.9.1
+branchs:
+  only:
+  - master
+cache:
+  apt: true
+  directories:
+  - node_modules
+install:
+- git pull
+- rm -f package-lock.json && npm install
+script:
+- echo $PATH
+- pm2 restart index.js
+after_success:
+- chmod 600 ~/.ssh/id_rsa
+before_install:
+- openssl aes-256-cbc -K $encrypted_a46a360c8512_key -iv $encrypted_a46a360c8512_iv
+  -in id_rsa.enc -out ~/.ssh/id_rsa -d
