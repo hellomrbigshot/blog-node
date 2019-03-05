@@ -13,6 +13,7 @@ router.post('/create', checkLogin, async (req, res, next) => {
     const page_title = req.body.page_title
     const to_user = req.body.to_user
     const reply_user = req.body.reply_user
+    const reply_content = req.body.reply_content
     const create_time = new Date().toLocaleString()
     try {
         const result = await CommentModel.create({ content, create_user, page_id, page_title, to_user, create_time, reply_user })

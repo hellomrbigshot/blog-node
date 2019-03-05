@@ -58,7 +58,7 @@ module.exports = {
             .find(query_obj)
             .skip(Count)
             .limit(pageSize)
-            .sort({ sort: -1 })
+            .sort({ 'update_time': -1 })
             .exec()
     },
     /**
