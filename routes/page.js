@@ -3,7 +3,7 @@ const router = express.Router()
 
 const PageModel = require('../models/page')
 const ActivityModel = require('../models/activity')
-const checkLogin = require('../middlewares/check').checkLogin
+const { checkLogin, clearCookie } = require('../middlewares/check')
 
 router.post('/new', checkLogin, async (req, res, next) => { // 新建文章
     try {
@@ -68,7 +68,7 @@ router.post('/edit', checkLogin, async (req, res, next) => { // 编辑文章
     }
 
 })
-router.post('/detail', async (req, res, next) => { // 获取文章详情
+router.post('/detail', clearCookie, async (req, res, next) => { // 获取文章详情
     try {
         const id = req.body.id
         let result = await PageModel.getPageById(id)
@@ -85,7 +85,7 @@ router.post('/detail', async (req, res, next) => { // 获取文章详情
  * @params {number} req.body.status
  * @params {number} req.body.secret
 */
-router.post('/pagelist', async (req, res, next) => { // 获取文章列表
+router.post('/pagelist', clearCookie, async (req, res, next) => { // 获取文章列表
     let pageSize = req.body.pageSize || 10
     let page = req.body.page || 1
     const type = req.body.type
@@ -106,7 +106,7 @@ router.post('/pagelist', async (req, res, next) => { // 获取文章列表
         res.status(200).json({ code: 'ERROR', data: e.message })
     }
 })
-router.post('/searchpage', async (req, res, next) => { // 模糊搜索
+router.post('/searchpage', clearCookie, async (req, res, next) => { // 模糊搜索
     const keywords = req.body.keywords || ''
     let page = req.body.page || 1
     let pageSize = req.body.pageSize || 999
@@ -157,7 +157,7 @@ router.post('/addcomment', checkLogin, async (req, res, next) => { // 保存评�
         res.status(200).json({ code: 'ERROR', data: e.message })
     }
 })
-router.post('/getcomments', async (req, res, next) => {
+router.post('/getcomments', clearCookie, async (req, res, next) => {
     const id = req.body.id
     try {
         let comments = (await PageModel.getPageById(id)).comments
