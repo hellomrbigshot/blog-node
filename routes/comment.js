@@ -70,12 +70,22 @@ router.post('/getusercommentlist', checkLogin, async (req, res, next) => {
     res.status(200).json({ code: 'ERROR', data: e.message })
   }
 })
-
+router.post('/updatecommentstatus', checkLogin,  async (req, res, next) => {
+  const ids = req.body.ids
+  try {
+    if (!ids.length) {
+      throw new Error('需要修改状态的评论列表不能为空')
+    }
+    let result = await CommentModel.updateCommentsStatus(ids)
+    res.status(200).json({ code: 'OK', data: '评论状态更新成功' })
+  } catch (e) {
+    res.status(200).json({ code: 'ERROR', data: e.message })
+  }
+})
 io.on('connect', (socket) => {
   const comment_schedule = schedule.scheduleJob('*/10 * * * * *', async () => { /** 一分钟查询一次是否有新的回复/评论 **/
     const COOKIE_STR = socket.request.headers.cookie
     const USER = getCookie(COOKIE_STR, 'user')
-    console.log(USER)
     if (USER !== undefined && USER !== null) { // 确认登录
       let num = await CommentModel.getCommentNum('to_user', USER, USER, false) // 获取未读的评论数量
       if (num > 0) {

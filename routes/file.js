@@ -89,7 +89,8 @@ router.get('/avatar/user', async (req, res) => {
     }
     let user = await UserModel.getUserByName(username)
     res.set('content-type', 'image/jpg')
-    let filename = user.avatar
+    let filename = user.avatar || 'avatar.png'
+    // console.log(filename)
     if (filename) {
         FileModel.getFilePath(filename).then(url => {
             try {

@@ -73,6 +73,11 @@ module.exports = {
       .find(query_obj)
       .countDocuments()
       .exec()
+  },
+  // 批量更新状态
+  updateCommentsStatus(ids) {
+    return Comment
+      .updateMany({ _id: {$in: ids} }, { $set: { is_read: true }})
+      .exec()
   }
-
 }
