@@ -36,9 +36,10 @@ module.exports = {
     if (is_read === false) {
       query_obj.is_read = false
     }
-    if (pageSize && Count) {
+    if (pageSize !== undefined && Count !== undefined) {
       return Comment
         .find(query_obj)
+        .sort({ 'create_time': -1 })
         .skip(Count)
         .limit(pageSize)
         .exec()

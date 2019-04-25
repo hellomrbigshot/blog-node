@@ -3,6 +3,7 @@ const router = express.Router()
 const UserModel = require('../models/user')
 const PageModel = require('../models/page')
 const checkLogin = require('../middlewares/check').checkLogin
+// 统计数据接口
 router.post('/', checkLogin, async (req, res, next) => {
     try {
         const [userNum, pageNum] = await Promise.all([UserModel.getUserNum(), PageModel.getPageNum({ status: 'normal' })])
