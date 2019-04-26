@@ -1,6 +1,7 @@
 module.exports = {
 	checkLogin (req, res, next) {
-		if (!req.session.user) { // 登录超时 前端通过状态码 401 识别
+    if (!req.session.user) { // 登录超时 前端通过状态码 401 识别
+      if (global.user) delete global.user
       res.clearCookie('user') // 如果 session 中没有 user，清除客户端 cookie
 			res.status(401).json({ code: 'error', data: '该用户未登录' })
 			return false
@@ -9,6 +10,7 @@ module.exports = {
 	},
 	checkNotLogin (req, res, next) {
     if (!req.session.user) { // 如果 session 中没有 user，清除客户端 cookie
+      if (global.user) delete global.user
       res.clearCookie('user')
     }
 		if (req.session.user) {
@@ -19,6 +21,7 @@ module.exports = {
   },
   clearCookie (req, res, next) {
     if (!req.session.user) { // 如果 session 中没有 user，清除客户端 cookie
+      if (global.user) delete global.user
       res.clearCookie('user')
     }
     next()

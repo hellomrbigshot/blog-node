@@ -25,7 +25,8 @@ router.post('/', checkNotLogin, async (req, res, next) => {
 			return false
 		}
 		delete user.password
-		req.session.user = JSON.parse(JSON.stringify(user))
+    req.session.user = JSON.parse(JSON.stringify(user))
+    global.user = username
 		// 返回登录成功
 		res.status(200).json({code: 'OK', data: '登录成功'})
 	} catch (e) {

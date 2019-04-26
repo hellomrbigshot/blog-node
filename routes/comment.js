@@ -82,17 +82,23 @@ router.post('/updatecommentstatus', checkLogin,  async (req, res, next) => {
     res.status(200).json({ code: 'ERROR', data: e.message })
   }
 })
+router.get('/getUnreadCommentNum', checkLogin, async (req, res, next) => {
+  const USER = req.session.user.username
+  try {
+    let num = await CommentModel.getCommentNum('to_user', USER, USER, false)
+    res.status(200).json({ code: 'OK', data: num })
+  } catch(e) {
+    res.status(200).json({ code: 'ERROR', data: e.message })
+  }
+  
+})
 io.on('connect', (socket) => {
   const comment_schedule = schedule.scheduleJob('*/10 * * * * *', async () => { /** 一分钟查询一次是否有新的回复/评论 **/
-    const COOKIE_STR = socket.request.headers.cookie
-    const USER = getCookie(COOKIE_STR, 'user')
+    const USER = global.user
     if (USER !== undefined && USER !== null) { // 确认登录
       let num = await CommentModel.getCommentNum('to_user', USER, USER, false) // 获取未读的评论数量
-      if (num > 0) {
-        socket.emit('unread-comment', num)
-      }
+      socket.emit('unread-comment', num)
     }
-    
   })
 })
 
