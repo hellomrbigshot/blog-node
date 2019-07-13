@@ -30,9 +30,9 @@ router.post('/new', checkLogin, async (req, res, next) => { // 新建文章
 
         const [page_num, draft_num] = await Promise.all([
             PageModel.getPageNum({ type: 'create_user', content: create_user, status: 'normal' }),
-			PageModel.getPageNum({ type: 'create_user', content: create_user, status: 'draft' }),
+			      PageModel.getPageNum({ type: 'create_user', content: create_user, status: 'draft' })
         ])
-        res.status(200).json({ code: 'OK', data: { page_num: page_num, draft_num: draft_num }})
+        res.status(200).json({ code: 'OK', data: { page_num, draft_num, id: result._id }})
     } catch (e) {
         res.status(200).json({ code: 'ERROR', data: e.message })
     }
@@ -60,9 +60,9 @@ router.post('/edit', checkLogin, async (req, res, next) => { // 编辑文章
         await ActivityModel.create({ type: 'page', id: result._id, create_time: result.create_time, update_time: result.update_time, create_user: result.create_user })
         const [page_num, draft_num] = await Promise.all([
             PageModel.getPageNum({ type: 'create_user', content: create_user, status: 'normal' }),
-			PageModel.getPageNum({ type: 'create_user', content: create_user, status: 'draft' }),
+			      PageModel.getPageNum({ type: 'create_user', content: create_user, status: 'draft' })
         ])
-        res.status(200).json({ code: 'OK', data: { page_num, draft_num }})
+        res.status(200).json({ code: 'OK', data: { page_num, draft_num, id }})
     } catch (e) {
         res.status(200).json({ code: 'ERROR', data: e.message })
     }
