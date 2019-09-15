@@ -5,7 +5,8 @@ const schedule = require('node-schedule')
 
 const CommentModel = require('../models/comment')
 const ActivityModel = require('../models/activity')
-const checkLogin = require('../middlewares/check').checkLogin
+const { checkLogin } = require('../middlewares/check')
+const { cacheUser } = require('../cache/user')
 
 io.set('transports', [
   'websocket',
@@ -53,7 +54,7 @@ router.post('/getusercommentlist', checkLogin, async (req, res, next) => {
   const type = req.body.type
   const create_user = req.body.create_user
   const to_user = req.body.to_user
-  const username = req.session.user.username
+  const username = cacheUser.getUserName()
   let pageSize = req.body.pageSize || 10
   let page = req.body.page || 1
   pageSize = typeof pageSize === 'number' ? pageSize : parseInt(pageSize)
@@ -83,7 +84,7 @@ router.post('/updatecommentstatus', checkLogin,  async (req, res, next) => {
   }
 })
 router.get('/getUnreadCommentNum', checkLogin, async (req, res, next) => {
-  const USER = req.session.user.username
+  const USER = cacheUser.getUserName()
   try {
     let num = await CommentModel.getCommentNum('to_user', USER, USER, false)
     res.status(200).json({ code: 'OK', data: num })

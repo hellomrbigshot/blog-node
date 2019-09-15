@@ -4,14 +4,15 @@ const router = express.Router()
 const PageModel = require('../models/page')
 const ActivityModel = require('../models/activity')
 const { checkLogin, clearCookie } = require('../middlewares/check')
+const { cacheUser } = require('../cache/user')
 
-router.post('/new', checkLogin, async (req, res, next) => { // 新建文章
+router.post('/new', checkLogin, async (req, res) => { // 新建文章
     try {
         const create_time = new Date().toLocaleString()
         const update_time = new Date().toLocaleString()
         const title = req.body.title
         const content = req.body.content
-        const create_user = req.session.user.username
+        const create_user = cacheUser.getUserName()
         const status = req.body.status
         const secret = req.body.secret
         const tags = req.body.tags
@@ -38,13 +39,13 @@ router.post('/new', checkLogin, async (req, res, next) => { // 新建文章
     }
 
 })
-router.post('/edit', checkLogin, async (req, res, next) => { // 编辑文章
+router.post('/edit', checkLogin, async (req, res) => { // 编辑文章
     try {
         const id = req.body.id
         const update_time = new Date()
         const title = req.body.title
         const content = req.body.content
-        const create_user = req.session.user.username
+        const create_user = cacheUser.getUserName()
         const status = req.body.status
         const secret = req.body.secret
         const tags = req.body.tags

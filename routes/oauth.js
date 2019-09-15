@@ -5,7 +5,8 @@ const weibo = require('../config/weibo')
 const fetch = require('node-fetch')
 require('url-search-params-polyfill')
 const UserModel = require('../models/user')
-const checkNotLogin = require('../middlewares/check').checkNotLogin
+const { checkNotLogin } = require('../middlewares/check')
+const { cacheUser } = require('../cache/user')
 
 const HOST = config.HOST
 const REGISTER_URL = `${HOST}/oauthregister`
@@ -93,7 +94,7 @@ router.get('/weibo/callback', (req, res, next) => {
  * @param {Object} res  
  */
 function oauthAction (type, name, avatar_url, domain, req, res) {
-    const session_user = req.session.user
+    const session_user = cacheUser.getUserName()
     if (session_user) {
         // 已登录，绑定第三方账号
         UserModel.getUserByOauthInfo({ type, name }).then(user => {
@@ -116,7 +117,9 @@ function oauthAction (type, name, avatar_url, domain, req, res) {
                 // 已注册，获取登录信息后直接跳转到列表页
                 user = user.toObject()
                 delete user.password
-                req.session.user = JSON.parse(JSON.stringify(user))
+                // 在这里获取 token 和 refreshToken
+                // req.session.user = JSON.parse(JSON.stringify(user))
+
                 res.redirect(`${HOST}?oauthtype=${type}&username=${user.username}`) // 跳转到首页
             } else {
                 // 如果没有注册，就跳转到注册界面
