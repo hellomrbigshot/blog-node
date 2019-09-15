@@ -3,12 +3,14 @@ const sha1 = require('sha1')
 const router = express.Router()
 
 const UserModel = require('../models/user')
-const FileModel = require('../models/file')
-const checkNotLogin = require('../middlewares/check').checkNotLogin
-const multer = require('../models/multerUtil')
+// const FileModel = require('../models/file')
+// const { checkNotLogin } = require('../middlewares/check')
+// const multer = require('../models/multerUtil')
+const { initToken } = require('../utils/jwt')
+
 
 // POST /signup 用户注册
-router.post('/', checkNotLogin, async (req, res, next) => {
+router.post('/', async (req, res) => {
     const username = req.body.username
     let password = req.body.password
     const repassword = req.body.repassword
@@ -52,9 +54,10 @@ router.post('/', checkNotLogin, async (req, res, next) => {
 
         // 用户信息写入数据库
         let result = JSON.parse(JSON.stringify(await UserModel.create(user)))
-        delete result.password
-        req.session.user = result
-        res.status(200).json({code: 'OK', data: result})
+        // delete result.password
+        // req.session.user = result
+        const tokenInfo = initToken(username)
+        res.status(200).json({code: 'OK', data: tokenInfo})
     } catch (e) {
         res.status(200).json({ code: 'ERROR', data: e.message })
         return false
@@ -63,7 +66,7 @@ router.post('/', checkNotLogin, async (req, res, next) => {
 })
 
 // 第三方登录 注册
-router.post('/oauth', checkNotLogin, async (req, res, next) => {
+router.post('/oauth', async (req, res, next) => {
     const username = req.body.username
     let password = req.body.password
     const repassword = req.body.repassword
@@ -111,7 +114,7 @@ router.post('/oauth', checkNotLogin, async (req, res, next) => {
         // 用户信息写入数据库
         let result = JSON.parse(JSON.stringify(await UserModel.create(user)))
         delete result.password
-        req.session.user = result
+        // req.session.user = result
         res.status(200).json({code: 'OK', data: result})
     } catch (e) {
         res.status(200).json({ code: 'ERROR', data: e.message })

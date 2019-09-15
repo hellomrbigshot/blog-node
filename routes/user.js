@@ -3,7 +3,7 @@ const express = require('express')
 const router = express.Router()
 
 const UserModel = require('../models/user')
-const checkLogin = require('../middlewares/check').checkLogin
+const { checkLogin } = require('../middlewares/check')
 
 // POST 用户列表
 router.post('/list', checkLogin, (req, res, next) => {

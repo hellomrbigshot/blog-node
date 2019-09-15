@@ -5,6 +5,8 @@ const TagModel = require('../models/tag')
 const PageModel = require('../models/page')
 
 const checkLogin = require('../middlewares/check').checkLogin
+const { cacheUser } = require('../cache/user')
+
 router.post('/taglist', async (req, res, next) => {
     let pageSize =  req.body.pageSize || 10
     let page = req.body.page || 1
@@ -50,7 +52,7 @@ router.post('/alltags', async (req, res, next) => {
 router.post('/create', checkLogin, async (req, res, next) => {
     const name = req.body.name
     const description = req.body.description
-    const create_user = req.session.user.username
+    const create_user = cacheUser.getUserName()
     const create_time = new Date()
     const update_time = new Date()
     try {
