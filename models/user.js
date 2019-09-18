@@ -20,7 +20,7 @@ module.exports = {
 	// 添加一条第三方授权信息
 	insertUserOauth (object) {
 		return User
-			.update({ username: object.username }, { $push: { oauthinfo: { type: object.type, avatar_url: object.avatar_url, name: object.name }}})
+			.updateOne({ username: object.username }, { $push: { oauthinfo: { type: object.type, avatar_url: object.avatar_url, name: object.name }}})
 			.exec()
 	},
 	// 获取所有用户列表
@@ -41,13 +41,13 @@ module.exports = {
 	// 编辑头像
 	updateAvatar (object) {
 		return User
-			.update({ username: object.username }, { avatar: object.avatar })
+			.updateOne({ username: object.username }, { avatar: object.avatar })
 			.exec()
 	},
 	// 编辑个人简介
 	updateBio (object) {
 		return User
-			.update({ username: object.username }, { bio: object.bio })
+			.updateOne({ username: object.username }, { bio: object.bio })
 			.exec()
 	}
 }

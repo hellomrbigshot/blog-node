@@ -21,7 +21,7 @@ module.exports = {
     // 添加一条评论
     addPageComment(id, comment) {
         return Page
-            .update({ _id: id }, { $push: { comments: comment } })
+            .updateOne({ _id: id }, { $push: { comments: comment } })
             .exec()
     },
     /**
