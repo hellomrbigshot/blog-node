@@ -17,7 +17,7 @@ app.use(history({
 	}]
 }))
 
-app.use(bodyParser.urlencoded({extended: true}))
+app.use(bodyParser.urlencoded({limit:'50mb', extended: true}))
 app.use(express.static(path.join(__dirname, '../dist')))
 // app.use(favicon(path.join(__dirname, './favicon.ico')))
 
