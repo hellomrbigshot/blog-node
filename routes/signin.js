@@ -38,7 +38,7 @@ router.post('/', async (req, res) => {
 	
 })
 // 根据用户名获取用户信息
-router.post('/getUserInfo', checkLogin, async (req, res) => {
+router.post('/getUserInfo', async (req, res) => {
 	const username = req.body.username
 	try {
 		let user = (await UserModel.getUserByName(username)).toObject()
