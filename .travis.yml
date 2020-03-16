@@ -10,10 +10,11 @@ cache:
   - node_modules
 install:
 - git pull
-- rm -f package-lock.json && npm install
-- pm2 restart index.js
+- yarn add global pm2
+- rm -f package-lock.json && yarn
 script:
 - echo $PATH
+- pm2 restart index.js
 after_success:
 - chmod 600 ~/.ssh/id_rsa
 before_install:
