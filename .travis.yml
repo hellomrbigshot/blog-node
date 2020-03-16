@@ -11,9 +11,9 @@ cache:
 install:
 - git pull
 - rm -f package-lock.json && npm install
+- pm2 restart index.js
 script:
 - echo $PATH
-- pm2 restart index.js
 after_success:
 - chmod 600 ~/.ssh/id_rsa
 before_install:
