@@ -8,16 +8,12 @@ cache:
   apt: true
   directories:
   - node_modules
-install:
-- git pull
-- rm -f package-lock.json && npm install
-script:
-- echo $PATH
-- pm2 restart index.js
-after_success:
-- chmod 600 ~/.ssh/id_rsa
 before_install:
 - openssl aes-256-cbc -K $encrypted_9b2d7e19d83c_key -iv $encrypted_9b2d7e19d83c_iv
-  -in id_rsa.enc -out ~\/.ssh/id_rsa -d
-- openssl aes-256-cbc -K $encrypted_a46a360c8512_key -iv $encrypted_a46a360c8512_iv
   -in id_rsa.enc -out ~/.ssh/id_rsa -d
+- chmod 600 ~/.ssh/id_rsa
+after_success:
+  - ssh root@39.104.15.110 'cd /home/blog/blog-node && git pull'
+  - ssh root@39.104.15.110 'cd /home/blog/blog-node && rm -rf node_modules yarn.lock'
+  - ssh root@39.104.15.110 'cd /home/blog/blog-node && yarn'
+  - ssh root@39.104.15.110 'cd /home/blog/blog-node && pm2 restart index.js'
