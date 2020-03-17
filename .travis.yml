@@ -8,15 +8,11 @@ cache:
   apt: true
   directories:
   - node_modules
-install:
-- git pull
-- yarn add global pm2
-- rm -f package-lock.json && yarn
-script:
-- echo $PATH
-- pm2 start index.js
-after_success:
-- chmod 600 ~/.ssh/id_rsa
 before_install:
-- openssl aes-256-cbc -K $encrypted_9b2d7e19d83c_key -iv $encrypted_9b2d7e19d83c_iv
-  -in id_rsa.enc -out ~/.ssh/id_rsa -d
+  - openssl aes-256-cbc -K $encrypted_9b2d7e19d83c_key -iv $encrypted_9b2d7e19d83c_iv
+    -in id_rsa.enc -out ~/.ssh/id_rsa -d
+  - chmod 600 ~/.ssh/id_rsa
+after_success:
+  - ssh root@39.104.15.110 'git pull'
+  - ssh root@39.104.15.110 'rm -rf node_modules && yarn.lock && yarn'
+  - ssh root@39.104.15.110 'pm2 restart index.js'
