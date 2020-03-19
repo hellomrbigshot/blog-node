@@ -7,9 +7,8 @@ module.exports = {
   },
   // 获取 todo 列表
   getTodoList(create_user) {
-    return Todo
-      .find({ create_user })
-      .sort({ 'create_time': -1 })
+    return Todo.find({ create_user })
+      .sort({ create_time: -1 })
       .exec()
   },
   updateTodoStatus(id, status) {
@@ -18,8 +17,6 @@ module.exports = {
     if (status === 'completed') {
       update_obj.complete_time = new Date()
     }
-    return Todo.
-      update(condition, { $set: update_obj })
-      .exec()
+    return Todo.update(condition, { $set: update_obj }).exec()
   }
 }

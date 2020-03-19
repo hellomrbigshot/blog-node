@@ -79,12 +79,12 @@ router.post('/detail', clearCookie, async (req, res, next) => { // 获取文章�
     }
 })
 /**
- * @params {number} req.body.pageSize-每页大小
- * @params {number} req.body.page-页码
- * @params {number} req.body.type
- * @params {number} req.body.content
- * @params {number} req.body.status
- * @params {number} req.body.secret
+ * @param {number} req.body.pageSize-每页大小
+ * @param {number} req.body.page-页码
+ * @param {number} req.body.type
+ * @param {number} req.body.content
+ * @param {number} req.body.status
+ * @param {number} req.body.secret
 */
 router.post('/pagelist', clearCookie, async (req, res, next) => { // 获取文章列表
     let pageSize = req.body.pageSize || 10

@@ -19,13 +19,13 @@ module.exports = {
     return Page.updateOne({ _id: id }, { $push: { comments: comment } }).exec()
   },
   /**
-   * @获取文章列表
-   * @params {string} type='' - 根据类型获取 ['', 'creator', 'tag']
-   * @params {string} content='' - 对应 type 的值
-   * @params {sting} content='normal'
-   * @params {number} pageSize
-   * @params {number} Count
-   * @params {boolean} secret
+   * @description 获取文章列表
+   * @param {string} type='' - 根据类型获取 ['', 'creator', 'tag']
+   * @param {string} content='' - 对应 type 的值
+   * @param {sting} content='normal'
+   * @param {number} pageSize
+   * @param {number} Count
+   * @param {boolean} secret
    */
   getPageList(query) {
     const type = query.type
@@ -55,13 +55,13 @@ module.exports = {
       .exec()
   },
   /**
-   * @查询文章数量
-   * @params {string} type='' - 根据类型获取 ['', 'creator', 'tag']
-   * @params {string} content='' - 对应 type 的值
-   * @params {sting} content='normal'
-   * @params {number} pageSize
-   * @params {number} Count
-   * @params {boolean} secret
+   * @description 查询文章数量
+   * @param {string} type='' - 根据类型获取 ['', 'creator', 'tag']
+   * @param {string} content='' - 对应 type 的值
+   * @param {sting} content='normal'
+   * @param {number} pageSize
+   * @param {number} Count
+   * @param {boolean} secret
    */
   getPageNum(query) {
     const type = query.type || ''
@@ -119,9 +119,9 @@ module.exports = {
     if (keywords) {
       query_obj['$or'] = [
         // 支持标题、正文和标签查找
-        { title: { $regex: reg, $options: '$i' } },
-        { content: { $regex: reg, $options: '$i' } },
-        { tags: { $regex: reg, $options: '$i' } }
+        { title: { $regex: reg, $options: 'i' } },
+        { content: { $regex: reg, $options: 'i' } },
+        { tags: { $regex: reg, $options: 'i' } }
       ]
     }
     return Page.find(query_obj)
