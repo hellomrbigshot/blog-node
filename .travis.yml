@@ -18,3 +18,4 @@ after_success:
   - ssh root@39.104.15.110 'cd /home/blog/blog-node && rm -rf node_modules yarn.lock'
   - ssh root@39.104.15.110 'cd /home/blog/blog-node && yarn'
   - ssh root@39.104.15.110 'cd /home/blog/blog-node && pm2 restart index.js'
+
