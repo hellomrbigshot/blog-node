@@ -13,13 +13,9 @@ before_install:
     -in id_rsa.enc -out ~/.ssh/id_rsa -d
   - chmod 600 ~/.ssh/id_rsa
   - echo -e "Host 39.104.15.110\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-install:
-# - git pull
-# - rm -f package-lock.json && npm install
-script:
-# - echo $PATH
-# - pm2 restart index.js
 after_success:
-  - ssh root@39.104.15.110 'git pull'
-  - ssh root@39.104.15.110 'rm -rf node_modules && yarn.lock && yarn'
-  - ssh root@39.104.15.110 'pm2 restart index.js'
+  - ssh root@39.104.15.110 'cd /home/blog/blog-node && git pull'
+  - ssh root@39.104.15.110 'cd /home/blog/blog-node && rm -rf node_modules yarn.lock'
+  - ssh root@39.104.15.110 'cd /home/blog/blog-node && yarn'
+  - ssh root@39.104.15.110 'cd /home/blog/blog-node && pm2 restart index.js'
+
