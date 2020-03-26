@@ -12,6 +12,7 @@ module.exports = {
   },
   // 通过 id 获取文章
   getPageById(id) {
+    console.log(id)
     return Page.findOne({ _id: id }).exec()
   },
   // 添加一条评论
