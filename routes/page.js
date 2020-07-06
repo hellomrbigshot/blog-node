@@ -73,18 +73,19 @@ router.post('/detail', clearCookie, async (req, res, next) => { // 获取文章�
     try {
         const id = req.body.id
         let result = await PageModel.getPageById(id)
+        result.content = result.content.replace('<--阅读全文-->', '')
         res.status(200).json({ code: 'OK', data: result })
     } catch (e) {
         res.status(200).json({ code: 'ERROR', data: e.message })
     }
 })
 /**
- * @params {number} req.body.pageSize-每页大小
- * @params {number} req.body.page-页码
- * @params {number} req.body.type
- * @params {number} req.body.content
- * @params {number} req.body.status
- * @params {number} req.body.secret
+ * @param {number} req.body.pageSize-每页大小
+ * @param {number} req.body.page-页码
+ * @param {number} req.body.type
+ * @param {number} req.body.content
+ * @param {number} req.body.status
+ * @param {number} req.body.secret
 */
 router.post('/pagelist', clearCookie, async (req, res, next) => { // 获取文章列表
     let pageSize = req.body.pageSize || 10
@@ -102,6 +103,15 @@ router.post('/pagelist', clearCookie, async (req, res, next) => { // 获取文�
             PageModel.getPageNum({ type, content, status, secret }),
             PageModel.getPageList({ type, content, status, pageSize, Count, secret, sort })
         ])
+        const splitStr = '<--阅读全文-->'
+        result = result.map(item => {
+          item = item.toObject()
+          if (item.content.includes(splitStr)) {
+            item.showMore = true
+            item.content = item.content.split(splitStr)[0]
+          }
+          return item
+        })
         res.status(200).json({ code: 'OK', data: { result, total }})
     } catch (e) {
         res.status(200).json({ code: 'ERROR', data: e.message })
@@ -118,7 +128,12 @@ router.post('/searchpage', clearCookie, async (req, res, next) => { // 模糊搜
         let [total, result] = await Promise.all([
             PageModel.searchPageNum({ keywords }),
             PageModel.searchPage({ keywords, Count, pageSize })
-        ]) 
+        ])
+        result = result.map(item => {
+          item = item.toObject()
+          item.content = item.content.replace('<--阅读全文-->', '')
+          return item
+        })
         res.status(200).json({ code: 'OK', data: { result, total } })
     } catch (e) {
         res.status(200).json({ code: 'ERROR', data: e.message })
@@ -140,6 +155,11 @@ router.post('/limitpagelist', checkLogin, async (req, res, next) => { // 根据�
             PageModel.getPageNum({ type, content, status, secret }),
             PageModel.getPageList({ type, content, status, pageSize, Count, secret, sort })
         ])
+        result = result.map(item => {
+          item = item.toObject()
+          item.content = item.content.replace('<--阅读全文-->', '')
+          return item
+        })
         res.status(200).json({ code: 'OK', data: { result, total }})
     } catch (e) {
         res.status(200).json({ code: 'ERROR', data: e.message })
