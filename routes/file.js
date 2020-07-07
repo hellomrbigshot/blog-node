@@ -8,8 +8,7 @@ const checkLogin = require('../middlewares/check').checkLogin
 
 // post /signup/uploadAvatar 上传头像
 router.post('/uploadAvatar', checkLogin, (req, res, next) => {
-  const imgData = req.body.imgData
-  const username = req.body.username
+  const { imgData, username } = req.body
   // 过滤data:URL
   const base64Data = imgData.replace(/^data:image\/\w+;base64,/, '')
   const dataBuffer = Buffer.from(base64Data, 'base64')
@@ -38,7 +37,7 @@ router.post('/uploadAvatar', checkLogin, (req, res, next) => {
 })
 // get /avatar/file_id
 router.get('/avatar', (req, res, next) => {
-  const filename = req.query.filename
+  const { filename } = req.query
   if (filename === 'undefined' || !filename) {
     res.end()
     return false
@@ -90,7 +89,7 @@ router.get('/avatar', (req, res, next) => {
     })
 })
 router.get('/avatar/user', async (req, res) => {
-  const username = req.query.username
+  const { username } = req.query
   if (username === 'undefined' || !username) {
     res.end()
     return false

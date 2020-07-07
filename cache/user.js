@@ -11,7 +11,7 @@ const cacheUser = (() => {
       username = user
     },
     getUserName: () => {
-      return  username
+      return username
     },
     clearUserName: () => {
       username = ''

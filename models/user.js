@@ -2,59 +2,59 @@ const User = require('../lib/user').User
 
 module.exports = {
   // 注册一个用户
-  create(user) {
+  create (user) {
     return User.create(user)
   },
   // 通过用户名获取用户信息
-  getUserByName(username) {
+  getUserByName (username) {
     return User.findOne({ username: username }).exec()
   },
   // 通过第三方登录信息获取用户信息
-  getUserByOauthInfo(object) {
+  getUserByOauthInfo ({ type, name }) {
     return User.findOne({
-      oauthinfo: { $elemMatch: { type: object.type, name: object.name } }
+      oauthinfo: { $elemMatch: { type: type, name: name } }
     }).exec()
   },
   // 添加一条第三方授权信息
-  insertUserOauth(object) {
+  insertUserOauth ({ username, type, avatar_url, name }) {
     return User.updateOne(
-      { username: object.username },
+      { username: username },
       {
         $push: {
           oauthinfo: {
-            type: object.type,
-            avatar_url: object.avatar_url,
-            name: object.name
+            type,
+            avatar_url,
+            name
           }
         }
       }
     ).exec()
   },
   // 获取所有用户列表
-  getUserList(pageSize, Count) {
+  getUserList (pageSize, Count) {
     return User.find()
       .skip(Count)
       .limit(pageSize)
       .exec()
   },
   // 获取用户数量
-  getUserNum() {
+  getUserNum () {
     return User.find()
       .countDocuments()
       .exec()
   },
   // 编辑头像
-  updateAvatar(object) {
+  updateAvatar ({ username, avatar }) {
     return User.updateOne(
-      { username: object.username },
-      { avatar: object.avatar }
+      { username },
+      { avatar }
     ).exec()
   },
   // 编辑个人简介
-  updateBio(object) {
+  updateBio({ username, bio }) {
     return User.updateOne(
-      { username: object.username },
-      { bio: object.bio }
+      { username },
+      { bio }
     ).exec()
   }
 }

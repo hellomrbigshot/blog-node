@@ -20,13 +20,7 @@ io.set('origins', '*:*')
 
 // 创建评论
 router.post('/create', checkLogin, async (req, res, next) => {
-  const content = req.body.content
-  const create_user = req.body.create_user
-  const page_id = req.body.page_id
-  const page_title = req.body.page_title
-  const to_user = req.body.to_user
-  const reply_user = req.body.reply_user
-  const reply_content = req.body.reply_content
+  const { content, create_user, page_id, page_title, to_user, reply_user, reply_content } = req.body
   const create_time = new Date().toLocaleString()
   try {
     const result = await CommentModel.create({ content, create_user, page_id, page_title, to_user, create_time, reply_user, reply_content })
@@ -40,7 +34,7 @@ router.post('/create', checkLogin, async (req, res, next) => {
 
 // 获取文章评论列表
 router.post('/getpagecommentlist', async (req, res, next) => {
-  const page_id = req.body.page_id
+  const { page_id } = req.body
   try {
     let result = await CommentModel.getCommentList({ type: 'page', content: page_id })
     res.status(200).json({ code: 'OK', data: result })
@@ -51,14 +45,11 @@ router.post('/getpagecommentlist', async (req, res, next) => {
 
 // 获取用户评论列表
 router.post('/getusercommentlist', checkLogin, async (req, res, next) => {
-  const type = req.body.type
-  const create_user = req.body.create_user
-  const to_user = req.body.to_user
+  const { type, create_user, to_user } = req.body
   const username = cacheUser.getUserName()
-  let pageSize = req.body.pageSize || 10
-  let page = req.body.page || 1
-  pageSize = typeof pageSize === 'number' ? pageSize : parseInt(pageSize)
-  page = typeof page === 'number' ? page : parseInt(page)
+  let { pageSize = 10, page = 1 } = req.body
+  pageSize = pageSize - 0
+  page = page - 0
   const Count = pageSize * (page - 1)
   const content = type === 'create_user' ? create_user : to_user
   try {
@@ -72,12 +63,12 @@ router.post('/getusercommentlist', checkLogin, async (req, res, next) => {
   }
 })
 router.post('/updatecommentstatus', checkLogin,  async (req, res, next) => {
-  const ids = req.body.ids
+  const { ids } = req.body
   try {
     if (!ids.length) {
       throw new Error('需要修改状态的评论列表不能为空')
     }
-    let result = await CommentModel.updateCommentsStatus(ids)
+    await CommentModel.updateCommentsStatus(ids)
     res.status(200).json({ code: 'OK', data: '评论状态更新成功' })
   } catch (e) {
     res.status(200).json({ code: 'ERROR', data: e.message })
@@ -102,18 +93,5 @@ io.on('connect', (socket) => {
     }
   })
 })
-
-
-function getCookie (str, key) {
-  const REG = /([^=]+)=([^;]+);?\s*/g
-  let cookie_obj = {}, result
-  while((result = REG.exec(str)) != null) {
-    cookie_obj[result[1]] = result[2];
-  }
-  if (cookie_obj[key] === undefined) {
-    return undefined
-  }
-  return cookie_obj[key]
-}
 
 module.exports = router
