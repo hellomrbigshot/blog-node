@@ -101,6 +101,16 @@ router.post('/detail', async (req, res, next) => {
     res.status(200).json({ code: 'ERROR', data: e.message })
   }
 })
+router.post('/editdetail', async (req, res, next) => {
+  // 获取文章详情
+  try {
+    const { id } = req.body
+    let result = await PageModel.getPageById(id)
+    res.status(200).json({ code: 'OK', data: result })
+  } catch (e) {
+    res.status(200).json({ code: 'ERROR', data: e.message })
+  }
+})
 /**
  * @param {number} req.body.pageSize
  * @param {number} req.body.pag
@@ -154,9 +164,13 @@ router.post('/searchpage', async (req, res, next) => {
       PageModel.searchPageNum({ keywords }),
       PageModel.searchPage({ keywords, Count, pageSize }),
     ])
+    const splitStr = '<--阅读全文-->'
     result = result.map((item) => {
       item = item.toObject()
-      item.content = item.content.replace('<--阅读全文-->', '')
+      if (item.content.includes(splitStr)) {
+        item.showMore = true
+        item.content = item.content.split(splitStr)[0]
+      }
       return item
     })
     res.status(200).json({ code: 'OK', data: { result, total } })
@@ -166,6 +180,7 @@ router.post('/searchpage', async (req, res, next) => {
 })
 router.post('/limitpagelist', checkLogin, async (req, res, next) => {
   // 根据条件获取文章列表，必须登录
+  console.log(req.body)
   const { type, content, status, secret, sort = 'create_time' } = req.body
   let { pageSize = 10, page = 1 } = req.body
   pageSize = pageSize - 0
@@ -184,9 +199,13 @@ router.post('/limitpagelist', checkLogin, async (req, res, next) => {
         sort,
       }),
     ])
+    const splitStr = '<--阅读全文-->'
     result = result.map((item) => {
       item = item.toObject()
-      item.content = item.content.replace('<--阅读全文-->', '')
+      if (item.content.includes(splitStr)) {
+        item.showMore = true
+        item.content = item.content.split(splitStr)[0]
+      }
       return item
     })
     res.status(200).json({ code: 'OK', data: { result, total } })
