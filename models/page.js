@@ -78,7 +78,6 @@ module.exports = {
       secret: false,
       status: 'normal',
     }
-    const sort = query.sort || 'create_time'
     if (keywords) {
       query_obj['$or'] = [
         // 支持标题、正文和标签查找
