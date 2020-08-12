@@ -5,7 +5,7 @@ const CommentModel = require('../models/comment')
 
 // 获取动态列表
 router.post('/getlist', async (req, res, next) => {
-  const { type, create_user, page = 1, pageSize = 10 } = req.body
+  let { type, create_user, page = 1, pageSize = 10 } = req.body
   pageSize = pageSize - 0
   page = page - 0
   const Count = pageSize * (page - 1)
