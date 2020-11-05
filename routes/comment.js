@@ -1,7 +1,9 @@
 const express = require('express')
 const router = express.Router()
+const socketioJwt = require('socketio-jwt')
 const io = require('socket.io').listen('8082', { origins: '*' })
 const schedule = require('node-schedule')
+const { SECRET_KEY } = require('../config/config')
 
 const CommentModel = require('../models/comment')
 const ActivityModel = require('../models/activity')
@@ -84,14 +86,20 @@ router.get('/getUnreadCommentNum', checkLogin, async (req, res, next) => {
   }
   
 })
-io.on('connect', (socket) => {
-  const comment_schedule = schedule.scheduleJob('*/10 * * * * *', async () => { /** 一分钟查询一次是否有新的回复/评论 **/
-    const USER = global.user
-    if (USER !== undefined && USER !== null) { // 确认登录
-      let num = await CommentModel.getCommentNum('to_user', USER, USER, false) // 获取未读的评论数量
-      socket.emit('unread-comment', num)
-    }
-  })
+io.use(socketioJwt.authorize({
+  secret: SECRET_KEY,
+  handshake: true,
+  timeout: '60000'
+}))
+io
+  .on('connection', socket => {
+    const comment_schedule = schedule.scheduleJob('*/10 * * * * *', async () => { /** 一分钟查询一次是否有新的回复/评论 **/
+      const USER = socket.decoded_token.username
+      if (USER !== undefined && USER !== null) { // 确认登录
+        let num = await CommentModel.getCommentNum('to_user', USER, USER, false) // 获取未读的评论数量
+        socket.emit('unread-comment', num)
+      }
+    })
 })
 
 module.exports = router
