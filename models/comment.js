@@ -2,21 +2,15 @@ const Comment = require('../lib/comment').Comment
 
 module.exports = {
   // 创建评论
-  create(comment) {
+  create (comment) {
     return Comment.create(comment)
   },
   // 通过 id 获取评论
-  getCommentById(id) {
+  getCommentById (id) {
     return Comment.findOne({ _id: id }).exec()
   },
   // 查询评论列表
-  getCommentList(query) {
-    const type = query.type
-    const content = query.content
-    const pageSize = query.pageSize
-    const Count = query.Count
-    const username = query.username
-    const is_read = query.is_read
+  getCommentList ({ type, content, pageSize, Count, username, is_read }) {
     let query_obj = {}
     if (type === 'page') {
       query_obj.page_id = content
@@ -44,7 +38,7 @@ module.exports = {
     }
   },
   // 查询评论数量
-  getCommentNum(type, content, username, is_read) {
+  getCommentNum (type, content, username, is_read) {
     let query_obj = {}
     if (type === 'page') {
       query_obj.page_id = content
@@ -64,7 +58,7 @@ module.exports = {
       .exec()
   },
   // 批量更新状态
-  updateCommentsStatus(ids) {
+  updateCommentsStatus (ids) {
     return Comment.updateMany(
       { _id: { $in: ids } },
       { $set: { is_read: true } }

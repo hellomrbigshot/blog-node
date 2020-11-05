@@ -5,7 +5,6 @@ const weibo = require('../config/weibo')
 const fetch = require('node-fetch')
 require('url-search-params-polyfill')
 const UserModel = require('../models/user')
-const { checkNotLogin } = require('../middlewares/check')
 const { cacheUser } = require('../cache/user')
 
 const HOST = config.HOST

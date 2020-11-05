@@ -1,7 +1,7 @@
 const Activity = require('../lib/activity').Activity
 module.exports = {
   // 创建动态
-  create(activity) {
+  create (activity) {
     return Activity.create(activity)
   },
   /**
@@ -12,11 +12,8 @@ module.exports = {
    * @param {create_user} string
    *
    * */
-  getList(query) {
-    const type = query.type
-    const create_user = query.create_user
-    const pageSize = query.pageSize
-    const Count = query.Count
+  getList (query) {
+    const { type, create_user, pageSize, Count } = query
     let query_obj = {}
     if (type) {
       query_obj.type = type
@@ -37,9 +34,8 @@ module.exports = {
     }
   },
   // 获取动态数量
-  getNum(query) {
-    const type = query.type
-    const create_user = query.create_user
+  getNum (query) {
+    const { type, create_user } = query
     let query_obj = {}
     if (type) {
       query_obj.type = type

@@ -7,8 +7,8 @@ const checkLogin = require('../middlewares/check').checkLogin
 router.post('/', checkLogin, async (req, res, next) => {
     try {
         const [userNum, pageNum] = await Promise.all([UserModel.getUserNum(), PageModel.getPageNum({ status: 'normal' })])
-        let data = { userNum, pageNum }
-        res.status(200).json({code: 'OK', data: data})
+        const data = { userNum, pageNum }
+        res.status(200).json({code: 'OK', data })
     } catch (e) {
         res.status(200).json({code: 'ERROR', data: e})
     }

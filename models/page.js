@@ -2,21 +2,21 @@ const Page = require('../lib/page').Page
 
 module.exports = {
   // 创建文章
-  create(page) {
+  create (page) {
     return Page.create(page)
   },
   // 编辑文章
-  update(id, updates) {
+  update (id, updates) {
     let condition = { _id: id }
     return Page.update(condition, { $set: updates }).exec()
   },
   // 通过 id 获取文章
-  getPageById(id) {
+  getPageById (id) {
     console.log(id)
     return Page.findOne({ _id: id }).exec()
   },
   // 添加一条评论
-  addPageComment(id, comment) {
+  addPageComment (id, comment) {
     return Page.updateOne({ _id: id }, { $push: { comments: comment } }).exec()
   },
   /**
@@ -28,14 +28,7 @@ module.exports = {
    * @param {number} Count
    * @param {boolean} secret
    */
-  getPageList(query) {
-    const type = query.type
-    const content = query.content
-    const status = query.status
-    const pageSize = query.pageSize || 10
-    const Count = query.Count || 0
-    const secret = query.secret
-    const sort = query.sort || 'create_time'
+  getPageList ({ type, content, status, pageSize = 10, Count = 0, secret, sort = 'create_time' }) {
     let query_obj = {}
     if (status) {
       query_obj.status = status
@@ -64,11 +57,7 @@ module.exports = {
    * @param {number} Count
    * @param {boolean} secret
    */
-  getPageNum(query) {
-    const type = query.type || ''
-    const content = query.content || ''
-    const status = query.status || ''
-    const secret = query.secret
+  getPageNum ({ type, content, status, secret }) {
     let query_obj = {}
     if (status) {
       query_obj.status = status
@@ -78,30 +67,23 @@ module.exports = {
     } else if (type === 'tag') {
       query_obj.tags = content
     }
-    if (secret !== undefined) {
+    if (secret) {
       query_obj.secret = JSON.parse(secret)
     }
-    // console.log(query_obj)
-    return Page.find(query_obj)
-      .countDocuments()
-      .exec()
+    return Page.find(query_obj).countDocuments().exec()
   },
-  searchPage(query) {
-    const keywords = query.keywords || ''
-    const pageSize = query.pageSize
-    const Count = query.Count
+  searchPage ({ keywords, pageSize, Count }) {
     const reg = new RegExp(keywords, 'i')
     let query_obj = {
       secret: false,
-      status: 'normal'
+      status: 'normal',
     }
-    const sort = query.sort || 'create_time'
     if (keywords) {
       query_obj['$or'] = [
         // 支持标题、正文和标签查找
         { title: { $regex: reg } },
         { content: { $regex: reg } },
-        { tags: { $regex: reg } }
+        { tags: { $regex: reg } },
       ]
     }
     return Page.find(query_obj)
@@ -110,24 +92,20 @@ module.exports = {
       .limit(pageSize)
       .exec()
   },
-  searchPageNum(query) {
-    const keywords = query.keywords
+  searchPageNum ({ keywords }) {
     const reg = new RegExp(keywords, 'i')
     let query_obj = {
       secret: false,
-      status: 'normal'
+      status: 'normal',
     }
     if (keywords) {
       query_obj['$or'] = [
         // 支持标题、正文和标签查找
-        { title: { $regex: reg, $options: 'i' } },
-        { content: { $regex: reg, $options: 'i' } },
-        { tags: { $regex: reg, $options: 'i' } }
+        { title: { $regex: reg } },
+        { content: { $regex: reg } },
+        { tags: { $regex: reg } },
       ]
     }
-    return Page.find(query_obj)
-      .sort({ sort: -1 })
-      .countDocuments()
-      .exec()
-  }
+    return Page.find(query_obj).sort({ sort: -1 }).countDocuments().exec()
+  },
 }
