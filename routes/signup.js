@@ -9,7 +9,7 @@ const { initToken } = require('../utils/jwt')
 
 // POST /signup 用户注册
 router.post('/', async (req, res) => {
-  const { username, repassword, avatar, gender = 'x', bio } = req.body
+  const { username, repassword, avatar = '', gender = 'x', bio } = req.body
   let { password } = req.body
   // 校验参数
   try {
@@ -36,6 +36,17 @@ router.post('/', async (req, res) => {
     }
     // 密码加密
     password = sha1(password)
+    // 待写入数据库的用户信息
+    let user = {
+      username,
+      password,
+      avatar,
+      gender,
+      bio
+    }
+    // 用户信息写入数据库
+    await UserModel.create(user)
+  
     const tokenInfo = initToken(username)
     res.status(200).json({ code: 'OK', data: tokenInfo })
   } catch (e) {
