@@ -39,7 +39,7 @@ router.post('/', async (req, res) => {
 router.post('/getUserInfo', async (req, res) => {
 	const { username } = req.body
 	try {
-		let user = (await UserModel.getUserByName(username))?.toObject()
+		let user = (await UserModel.getUserByName(username)).toObject()
 		delete user.password
 		const [page_num, draft_num, comment_num] = await Promise.all([
 			PageModel.getPageNum({ type: 'create_user', content: username, status: 'normal' }),
