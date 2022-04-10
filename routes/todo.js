@@ -5,7 +5,7 @@ const { cacheUser } = require('../cache/user')
 
 router.post('/create', checkLogin, async (req, res, next) => {
   const { content, expected_time } = req.body
-  const create_time = new Date().toLocaleString()
+  const create_time = new Date()
   const status = 'pending'
   const completed_time = ''
   const create_user = cacheUser.getUserName()
