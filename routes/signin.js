@@ -5,7 +5,7 @@ const router = express.Router()
 const UserModel = require('../models/user')
 const PageModel = require('../models/page')
 const CommentModel = require('../models/comment')
-const { checkLogin } = require('../middlewares/check')
+// const { checkLogin } = require('../middlewares/check')
 const { initToken, getTokenUser } = require('../utils/jwt')
 
 // POST /signin 用户登录
@@ -39,7 +39,7 @@ router.post('/', async (req, res) => {
 router.post('/getUserInfo', async (req, res) => {
 	const { username } = req.body
 	try {
-		let user = (await UserModel.getUserByName(username)).toObject()
+		let user = (await UserModel.getUserByName(username))?.toObject()
 		delete user.password
 		const [page_num, draft_num, comment_num] = await Promise.all([
 			PageModel.getPageNum({ type: 'create_user', content: username, status: 'normal' }),

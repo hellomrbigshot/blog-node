@@ -1,7 +1,21 @@
 const express = require('express')
 const router = express.Router()
 const socketioJwt = require('socketio-jwt')
-const io = require('socket.io').listen('8082', { origins: '*' })
+const { Server } = require('socket.io')
+const io = new Server(8082, {
+  transports: [
+    'websocket',
+    'flashsocket',
+    'htmlfile',
+    'xhr-polling',
+    'jsonp-polling',
+    'polling'
+  ],
+  cors: {
+    origin: ['https://hellomrbigbigsho.xyz', 'http://localhost:3000'],
+    credentials: true
+  }
+})
 const schedule = require('node-schedule')
 const { SECRET_KEY } = require('../config/config')
 
@@ -10,22 +24,14 @@ const ActivityModel = require('../models/activity')
 const { checkLogin } = require('../middlewares/check')
 const { cacheUser } = require('../cache/user')
 
-io.set('transports', [
-  'websocket',
-  'flashsocket',
-  'htmlfile',
-  'xhr-polling',
-  'jsonp-polling',
-  'polling'
-])
-io.set('origins', '*:*')
-
 // 创建评论
 router.post('/create', checkLogin, async (req, res, next) => {
   const { content, create_user, page_id, page_title, to_user, reply_user, reply_content } = req.body
-  const create_time = new Date().toLocaleString()
+  const create_time = new Date()
+  console.log(create_time)
   try {
     const result = await CommentModel.create({ content, create_user, page_id, page_title, to_user, create_time, reply_user, reply_content })
+    console.log(result)
     // 添加一条动态
     await ActivityModel.create({ type: 'comment', id: result._id, create_time: result.create_time, create_user: result.create_user, update_time: result.create_time })
     res.status(200).json({ code: 'OK', data: result })
@@ -91,15 +97,14 @@ io.use(socketioJwt.authorize({
   handshake: true,
   timeout: '60000'
 }))
-io
-  .on('connection', socket => {
-    const comment_schedule = schedule.scheduleJob('*/10 * * * * *', async () => { /** 一分钟查询一次是否有新的回复/评论 **/
-      const USER = socket.decoded_token.username
-      if (USER !== undefined && USER !== null) { // 确认登录
-        let num = await CommentModel.getCommentNum('to_user', USER, USER, false) // 获取未读的评论数量
-        socket.emit('unread-comment', num)
-      }
-    })
+io.on('connection', socket => {
+  const comment_schedule = schedule.scheduleJob('*/10 * * * * *', async () => { /** 一分钟查询一次是否有新的回复/评论 **/
+    const USER = socket.decoded_token.username
+    if (USER !== undefined && USER !== null) { // 确认登录
+      let num = await CommentModel.getCommentNum('to_user', USER, USER, false) // 获取未读的评论数量
+      socket.emit('unread-comment', num)
+    }
+  })
 })
 
 module.exports = router

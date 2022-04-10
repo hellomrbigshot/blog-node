@@ -10,8 +10,8 @@ router.post('/new', checkLogin, async (req, res) => {
   // 新建文章
   try {
     const { title, content, status, secret, tags } = req.body
-    const create_time = new Date().toLocaleString()
-    const update_time = new Date().toLocaleString()
+    const create_time = new Date()
+    const update_time = new Date()
     const create_user = cacheUser.getUserName()
     let page = {
       title,
